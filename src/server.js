@@ -52,7 +52,10 @@ io.on("connection", (socket) => {
                         Image: args.name,
                         Env: args.env
                             ? Object.entries(args.env).map(
-                                  (e) => `${e[0]}=${e[1]}`
+                                  (e) =>
+                                      `${e[0]}=${Buffer.from(
+                                          e[1].contentBytes
+                                      ).toString("ascii")}`
                               )
                             : {},
                     },

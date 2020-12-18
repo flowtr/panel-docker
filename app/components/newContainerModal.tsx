@@ -2,12 +2,13 @@ import * as React from "react";
 import Modal from "./modal";
 import * as classNames from "classnames";
 import { createRef, SyntheticEvent } from "react";
-import { Input, Col, Button, Row } from "antd";
+import { Input, Row } from "antd";
 import { ObjectMap } from "./object-map";
+import { KeyValDef } from "./key-value-editor";
 
 interface ModalProperties {
     modalRef: React.Ref<Modal>;
-    onRunImage?: (name: string, env: Record<string, string>) => void;
+    onRunImage?: (name: string, env: KeyValDef) => void;
 }
 
 interface ModalState {
@@ -41,10 +42,11 @@ export class NewContainerDialog extends React.Component<
     }
 
     runImage() {
+        console.debug(this.envMapRef.current.state.keyValues);
         if (this.state.isValid && this.props.onRunImage)
             this.props.onRunImage(
                 this.state.imageName,
-                this.envMapRef.current.state.obj ?? {}
+                this.envMapRef.current.state.keyValues ?? {}
             );
 
         return this.state.isValid;
