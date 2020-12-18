@@ -8,8 +8,8 @@
         "start-dev": "cross-env NODE_ENV=development concurrently \"nodemon src/server.js\" \"webpack --watch\"",
         "lint": "eslint {src,app}/**/*.{js,ts,tsx,jsx} --fix"
     },
-    "author": "",
-    "license": "ISC",
+    "author": "Theo Paris",
+    "license": "GPL-v3.0-or-later",
     "dependencies": {
         "antd": "^4.9.4",
         "classnames": "^2.2.6",
