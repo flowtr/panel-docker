@@ -1,51 +1,87 @@
-import * as React from 'react'
+import * as React from "react";
+import { Button, Modal as AntdModal, Space } from "antd";
+import Draggable from "react-draggable";
 
-interface ModalProperties {
-    id: string
-    title: string
-    buttonText?: string
-    onButtonClicked?: () => boolean|undefined
+export interface ModalProperties {
+    title: string;
+    buttonText?: string;
+    onButtonClicked?: () => boolean | undefined;
 }
 
-export default class Modal extends React.Component<ModalProperties, {}> {
+export interface ModalState {
+    visible: boolean;
+    disabled: boolean;
+}
 
-    modalElementId: string
-
+export default class Modal extends React.Component<
+    ModalProperties,
+    ModalState
+> {
     constructor(props: ModalProperties) {
-        super(props)
-        this.modalElementId = `#${this.props.id}`
+        super(props);
+        this.state = {
+            visible: false,
+            disabled: false,
+        };
     }
 
+    toggleModal = () => {
+        this.setState((prev) => ({
+            visible: !prev.visible,
+        }));
+    };
+
     onPrimaryButtonClick() {
-        if (this.props.onButtonClicked) {
-            if (this.props.onButtonClicked() !== false) {
-                $(this.modalElementId).modal('hide')
-            }
-        }
+        if (this.props.onButtonClicked)
+            if (this.props.onButtonClicked() !== false) this.toggleModal();
     }
 
     render() {
         return (
-            <div className="modal fade" id={ this.props.id }>
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <button type="button" className="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 className="modal-title">{ this.props.title }</h4>
-                        </div>
-                        <div className="modal-body">
-                            { this.props.children }
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button"
-                                onClick={this.onPrimaryButtonClick.bind(this)}
-                                className="btn btn-primary">{ this.props.buttonText || "Ok" }
-                            </button>
-                        </div>
+            <AntdModal
+                visible={this.state.visible}
+                centered={true}
+                bodyStyle={{ width: "250px", height: "300px" }}
+                title={
+                    <div
+                        style={{
+                            width: "100%",
+                            cursor: "move",
+                        }}
+                        onMouseOver={() => {
+                            if (this.state.disabled)
+                                this.setState({
+                                    disabled: false,
+                                });
+                        }}
+                        onMouseOut={() => {
+                            this.setState({
+                                disabled: true,
+                            });
+                        }}
+                    >
+                        {this.props.title}
                     </div>
-                </div>
-            </div>
-        )
+                }
+                closable={true}
+                onCancel={this.toggleModal}
+                modalRender={(modal) => (
+                    <Draggable disabled={this.state.disabled}>
+                        {modal}
+                    </Draggable>
+                )}
+                footer={[
+                    <Button
+                        type="primary"
+                        onClick={this.onPrimaryButtonClick.bind(this)}
+                        className="btn btn-primary"
+                    >
+                        {this.props.buttonText || "Ok"}
+                    </Button>,
+                ]}
+            >
+                {this.props.children}
+            </AntdModal>
+        );
     }
-
 }

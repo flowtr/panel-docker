@@ -1,16 +1,25 @@
-import * as React from 'react'
+import * as React from "react";
+import { Button } from "antd";
+import Modal from "./modal";
 
 export interface DialogTriggerProperties {
-    id: string
-    buttonText: string
+    modal: Modal;
+    buttonText: string;
 }
 
-export class DialogTrigger extends React.Component<DialogTriggerProperties, {}> {
+export class DialogTrigger extends React.Component<
+    DialogTriggerProperties,
+    Record<string, unknown>
+> {
     render() {
-        const href = `#${this.props.id}`
-
         return (
-            <a className="btn btn-primary" data-toggle="modal" href={ href }>{ this.props.buttonText }</a>
-        )
+            <Button
+                type={"primary"}
+                style={{ marginBottom: "15px" }}
+                onClick={this.props.modal && this.props.modal.toggleModal}
+            >
+                {this.props.buttonText}
+            </Button>
+        );
     }
 }

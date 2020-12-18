@@ -4,33 +4,21 @@ This is the code repository for the "Create a Docker dashboard with Typescript, 
 
 ## Prerequisites
 
-**Node 6.x**
+**Node 14.x**
 
-**Webpack 2**
-
-```
-npm install -g webpack
-```
-
-**Typescript 2.x**
-
-```
-npm install -g typescript
-```
+**pnpm package manager** (`npm i -g pnpm`)
 
 Clone the project, then run:
 
 ```
-npm install
-npm link typescript
+pnpm install
 ```
 
-The sample interacts with Docker, so having the [native Docker tools](https://www.docker.com/) for your OS is required for the sample to be of any use. If you're looking for an image to play around with for the sample, feel free to use `elkdanger/express-app`:
-
-`docker pull elkdanger/express-app`
+The sample interacts with Docker, so having the [native Docker tools](https://www.docker.com/) for your OS is required
+for the sample to be of any use.
 
 ## Running the sample
 
 ```
-npm start
+pnpm run start
 ```

@@ -1,66 +1,84 @@
-import * as React from 'react'
-import Modal from './modal'
-import * as classNames from 'classnames'
+import * as React from "react";
+import Modal from "./modal";
+import * as classNames from "classnames";
+import { SyntheticEvent } from "react";
+import { Input, Col } from "antd";
 
 interface ModalProperties {
-    id: string,
-    onRunImage?: (name: string) => void
+    modalRef: React.Ref<Modal>;
+    onRunImage?: (name: string) => void;
 }
 
 interface ModalState {
-    imageName: string
-    isValid: boolean
+    imageName: string;
+    isValid: boolean;
 }
 
-export class NewContainerDialog extends React.Component<ModalProperties, ModalState> {
-
+export class NewContainerDialog extends React.Component<
+    ModalProperties,
+    ModalState
+> {
     constructor(props: ModalProperties) {
-        super(props)
+        super(props);
 
         this.state = {
-            imageName: '',
-            isValid: false
-        }
+            imageName: "",
+            isValid: false,
+        };
     }
 
-    onImageNameChange(e: any) {
-        const name = e.target.value
+    onImageNameChange(e: SyntheticEvent<{ value: string }>) {
+        const name = e.currentTarget.value;
 
         this.setState({
             imageName: name,
-            isValid: name.length > 0
-        })
+            isValid: name.length > 0,
+        });
     }
 
     runImage() {
         if (this.state.isValid && this.props.onRunImage)
-            this.props.onRunImage(this.state.imageName)
-            
-        return this.state.isValid
+            this.props.onRunImage(this.state.imageName);
+
+        return this.state.isValid;
     }
 
     render() {
-
-        let inputClass = classNames({
+        const inputClass = classNames({
             "form-group": true,
-            "has-error": !this.state.isValid
-        })
+            "has-error": !this.state.isValid,
+        });
 
         return (
-            <Modal id="newContainerModal" buttonText="Run" title="Create a new container" onButtonClicked={this.runImage.bind(this)}>
-                <form className="form-horizontal">
+            <Modal
+                buttonText="Run"
+                title="Create a new container"
+                ref={this.props.modalRef}
+                onButtonClicked={this.runImage.bind(this)}
+            >
+                <form>
                     <div className={inputClass}>
-                        <label htmlFor="imageName" className="col-sm-3 control-label">Image name</label>
-                        <div className="col-sm-9">
-                            <input type="text" 
-                                className="form-control" 
+                        <Col flex={"auto"}>
+                            {" "}
+                            <label
+                                htmlFor="imageName"
+                                className="control-label"
+                            >
+                                Image name
+                            </label>
+                        </Col>
+                        <Col flex={"auto"}>
+                            <Input
+                                type="text"
+                                className="form-control"
                                 onChange={this.onImageNameChange.bind(this)}
-                                id="imageName" 
-                                placeholder="e.g mongodb:latest"/>
-                        </div>
+                                id="imageName"
+                                placeholder="e.g mongodb:latest"
+                            />
+                        </Col>
                     </div>
                 </form>
             </Modal>
-        )
+        );
     }
 }
