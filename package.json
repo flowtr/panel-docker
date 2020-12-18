@@ -6,7 +6,7 @@
     "scripts": {
         "start": "cross-env NODE_ENV=production webpack --config webpack.config.js && node src/server.js",
         "start-dev": "cross-env NODE_ENV=development concurrently \"nodemon src/server.js\" \"webpack --watch\"",
-        "lint": "eslint {src,app}/**/* --fix"
+        "lint": "eslint {src,app}/**/*.{js,ts,tsx,jsx} --fix"
     },
     "author": "",
     "license": "ISC",
