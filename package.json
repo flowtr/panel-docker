@@ -11,6 +11,7 @@
     "author": "Theo Paris",
     "license": "GPL-v3.0-or-later",
     "dependencies": {
+        "@ant-design/icons": "^4.3.0",
         "antd": "^4.9.4",
         "classnames": "^2.2.6",
         "dockerode": "^3.2.1",
@@ -26,7 +27,7 @@
     },
     "devDependencies": {
         "@types/bootstrap": "^3.4.0",
-        "@types/classnames": "0.0.32",
+        "@types/classnames": "^2.2.11",
         "@types/dockerode": "^3.2.1",
         "@types/jquery": "^2.0.56",
         "@types/lodash": "^4.14.165",

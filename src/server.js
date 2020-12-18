@@ -43,10 +43,19 @@ io.on("connection", (socket) => {
     });
 
     socket.on("image.run", (args) => {
-        docker.pull(args.name).then((err) => {
-            if (!err)
+        console.log(`Received: ${JSON.stringify(args)}`);
+        docker
+            .pull(args.name)
+            .then(() => {
                 docker.createContainer(
-                    { Image: args.name },
+                    {
+                        Image: args.name,
+                        Env: args.env
+                            ? Object.entries(args.env).map(
+                                  (e) => `${e[0]}=${e[1]}`
+                              )
+                            : {},
+                    },
                     (err, container) => {
                         if (!err)
                             container.start((err) => {
@@ -58,7 +67,7 @@ io.on("connection", (socket) => {
                         else socket.emit("image.error", { message: err });
                     }
                 );
-            else socket.emit("image.error", { message: err });
-        });
+            })
+            .catch((err) => socket.emit("image.error", { message: err }));
     });
 });

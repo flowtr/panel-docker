@@ -1,12 +1,13 @@
 import * as React from "react";
 import Modal from "./modal";
 import * as classNames from "classnames";
-import { SyntheticEvent } from "react";
-import { Input, Col } from "antd";
+import { createRef, SyntheticEvent } from "react";
+import { Input, Col, Button, Row } from "antd";
+import { ObjectMap } from "./object-map";
 
 interface ModalProperties {
     modalRef: React.Ref<Modal>;
-    onRunImage?: (name: string) => void;
+    onRunImage?: (name: string, env: Record<string, string>) => void;
 }
 
 interface ModalState {
@@ -18,6 +19,8 @@ export class NewContainerDialog extends React.Component<
     ModalProperties,
     ModalState
 > {
+    private envMapRef: React.RefObject<ObjectMap>;
+
     constructor(props: ModalProperties) {
         super(props);
 
@@ -25,6 +28,7 @@ export class NewContainerDialog extends React.Component<
             imageName: "",
             isValid: false,
         };
+        this.envMapRef = createRef();
     }
 
     onImageNameChange(e: SyntheticEvent<{ value: string }>) {
@@ -38,7 +42,10 @@ export class NewContainerDialog extends React.Component<
 
     runImage() {
         if (this.state.isValid && this.props.onRunImage)
-            this.props.onRunImage(this.state.imageName);
+            this.props.onRunImage(
+                this.state.imageName,
+                this.envMapRef.current.state.obj ?? {}
+            );
 
         return this.state.isValid;
     }
@@ -58,7 +65,7 @@ export class NewContainerDialog extends React.Component<
             >
                 <form>
                     <div className={inputClass}>
-                        <Col flex={"auto"}>
+                        <Row>
                             {" "}
                             <label
                                 htmlFor="imageName"
@@ -66,8 +73,8 @@ export class NewContainerDialog extends React.Component<
                             >
                                 Image name
                             </label>
-                        </Col>
-                        <Col flex={"auto"}>
+                        </Row>
+                        <Row>
                             <Input
                                 type="text"
                                 className="form-control"
@@ -75,7 +82,14 @@ export class NewContainerDialog extends React.Component<
                                 id="imageName"
                                 placeholder="e.g mongodb:latest"
                             />
-                        </Col>
+                        </Row>
+                        <label
+                            className="control-label"
+                            style={{ marginTop: "15px" }}
+                        >
+                            Environment variables
+                        </label>
+                        <ObjectMap key="env-map" ref={this.envMapRef} />
                     </div>
                 </form>
             </Modal>

@@ -41,7 +41,7 @@ export default class Modal extends React.Component<
             <AntdModal
                 visible={this.state.visible}
                 centered={true}
-                bodyStyle={{ width: "250px", height: "300px" }}
+                bodyStyle={{ width: "100%", height: "300px" }}
                 title={
                     <div
                         style={{

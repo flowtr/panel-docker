@@ -66,8 +66,8 @@ export class AppComponent extends React.Component<
         socket.emit("containers.list");
     }
 
-    onRunImage(name: string) {
-        socket.emit("image.run", { name: name });
+    onRunImage(name: string, env: Record<string, string>) {
+        socket.emit("image.run", { name, env });
     }
 
     render() {
