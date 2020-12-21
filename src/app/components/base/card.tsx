@@ -1,14 +1,33 @@
-import React, { StyleHTMLAttributes } from "react";
-import { Card, CardProps, Heading } from "rebass/styled-components";
+import React, { ReactNode, StyleHTMLAttributes } from "react";
+import {
+    Box,
+    BoxProps,
+    Heading,
+    Stack,
+    StackDirection,
+} from "@chakra-ui/react";
 
 export const ThemedCard = (
     props: {
-        title: string;
-    } & CardProps &
+        cardTitle?: ReactNode;
+        spacing?: string | number;
+        direction?: StackDirection;
+    } & BoxProps &
         StyleHTMLAttributes<HTMLDivElement>
 ) => (
-    <Card bg={"#444444"} {...props}>
-        <Heading fontSize={[5, 6, 7]}>{props.title}</Heading>
-        <div className={"card-body"}>{props.children}</div>
-    </Card>
+    <Stack
+        bg={"background"}
+        spacing={props.spacing ? props.spacing : 4}
+        direction={props.direction ?? "column"}
+        {...props}
+    >
+        {typeof props.cardTitle === "string" ? (
+            props.cardTitle
+        ) : (
+            <Heading bg={"background"}>{props.cardTitle}</Heading>
+        )}
+        <Box className={"card-body"} bg={"background"} p={5}>
+            {props.children}
+        </Box>
+    </Stack>
 );

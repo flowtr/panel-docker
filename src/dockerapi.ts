@@ -1,5 +1,6 @@
-let Docker = require("dockerode");
-let isWindows = process.platform === "win32";
+import Docker from "dockerode";
+
+const isWindows = process.platform === "win32";
 
 let options = {};
 
@@ -13,4 +14,4 @@ else
         socketPath: "/var/run/docker.sock",
     };
 
-module.exports = new Docker(options);
+export default new Docker(options);

@@ -1,27 +1,27 @@
 import React from "react";
-import { Container } from "../components/containerListItem";
 import { ContainerList } from "../components/containerList";
 import { partition } from "lodash";
 import * as io from "socket.io-client";
 import { NewContainerDialog } from "../components/newContainerModal";
 import { DialogTrigger } from "../components/dialogTrigger";
-import Modal from "../components/modal";
+import { BaseModal } from "../components/base/modal";
 import { createRef } from "react";
-import { Button } from "antd";
-import { KeyValDef } from "../components/key-value-editor";
+import { ContainerData, KeyValDef } from "../../common/types";
+import { ContainerInfo } from "dockerode";
+import { createStandaloneToast } from "@chakra-ui/react";
 
-const socket = io.connect();
+const socket = io.connect("localhost:3000");
 
 class AppState {
-    containers?: Container[];
-    stoppedContainers?: Container[];
+    containers?: ContainerData[];
+    stoppedContainers?: ContainerData[];
 }
 
 export class HomePage extends React.Component<
     Record<string, unknown>,
     AppState
 > {
-    private newContainerModal: React.RefObject<Modal>;
+    private newContainerModal: React.RefObject<BaseModal>;
 
     constructor(props: Record<string, unknown>) {
         super(props);
@@ -42,16 +42,31 @@ export class HomePage extends React.Component<
                 stoppedContainers: partitioned[1].map(this.mapContainer),
             });
         });
+        const toast = createStandaloneToast();
 
-        socket.on(
-            "image.error",
-            (args: { message: { json: { message: string } } }) => {
-                alert(args.message.json.message);
-            }
-        );
+        socket.on("error.image", (args: { message: unknown }) => {
+            // alert(args.message.json.message);
+            toast({
+                title: "An Error Ocurred",
+                description: JSON.stringify(args.message),
+                status: "error",
+                duration: 9000,
+                isClosable: true,
+            });
+        });
+        socket.on("error.refresh", (args: { message: unknown }) => {
+            toast({
+                title: "An Error Ocurred",
+                description: JSON.stringify(args.message),
+                status: "error",
+                duration: 9000,
+                isClosable: true,
+            });
+        });
     }
 
-    mapContainer(container: Record<string, unknown>): Container {
+    mapContainer(container: ContainerInfo): ContainerData {
+        // TODO: volumes and environment variables
         return {
             id: container.Id as string,
             name: (container.Names as string[])
@@ -60,6 +75,9 @@ export class HomePage extends React.Component<
             state: container.State as string,
             status: `${container.State} (${container.Status})`,
             image: container.Image as string,
+            env: {},
+            ports: {},
+            volumes: {},
         };
     }
 

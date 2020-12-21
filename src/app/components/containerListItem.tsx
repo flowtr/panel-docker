@@ -1,36 +1,37 @@
 import React from "react";
 import classNames from "classnames";
 import * as io from "socket.io-client";
-import { Button, Card, message } from "antd";
-import { prompt } from "./prompt";
-import Modal from "./modal";
+import { Button, Stack, Heading } from "@chakra-ui/react";
+import { BaseModal } from "./base/modal";
+import { ContainerData } from "../../common/types";
+import { ThemedCard } from "./base/card";
 
-const socket = io.connect();
-
-export interface Container {
-    id: string;
-    name: string;
-    image: string;
-    state: string;
-    status: string;
-}
+const socket = io.connect("localhost:3000");
 
 export class ContainerListItem extends React.Component<
-    Container,
+    ContainerData,
     Record<string, unknown>
 > {
-   private removeModalRef: React.RefObject<Modal>;
+    private removeModalRef: React.RefObject<BaseModal>;
 
-   constructor(props:Container) {
-       super();
-   }
+    constructor(props: ContainerData) {
+        super(props);
+        this.removeModalRef = React.createRef();
+    }
 
     onActionButtonClick() {
         const evt = this.isRunning() ? "container.stop" : "container.start";
         socket.emit(evt, { id: this.props.id });
     }
 
+    /**
+     * Prompts the user before removing the container
+     */
     onRemoveBtnClicked() {
+        this.removeModalRef.current.toggleModal();
+    }
+
+    removeContainer() {
         const evt = "container.rm";
         socket.emit(evt, { id: this.props.id });
     }
@@ -45,37 +46,46 @@ export class ContainerListItem extends React.Component<
         const buttonText = this.isRunning() ? "Stop" : "Start";
 
         return (
-            <div className="col-sm-3">
-                <Card className={classes} title={this.props.name}>
+            <div>
+                <ThemedCard
+                    className={classes}
+                    cardTitle={
+                        <Heading px={10} pt={10} as={"h2"} bg={"background"}>
+                            {this.props.name}
+                        </Heading>
+                    }
+                >
                     <div className="panel-body">
                         Status: {this.props.status}
                         <br />
                         Image: {this.props.image}
                     </div>
-                    <div className="panel-footer">
+                    <Stack direction="row" bg="secondaryBackground">
                         <Button
-                            type={"primary"}
+                            colorScheme={"blue"}
                             onClick={this.onActionButtonClick.bind(this)}
                             className="btn btn-default"
                         >
                             {buttonText}
                         </Button>
                         <Button
-                            type={"primary"}
-                            danger={true}
+                            colorScheme={"red"}
                             onClick={this.onRemoveBtnClicked.bind(this)}
                             className="btn btn-default"
                         >
                             Remove
                         </Button>
-                    </div>
-                </Card>
-                <Modal
+                    </Stack>
+                </ThemedCard>
+                <BaseModal
                     buttonText="Remove"
                     title="Are you sure you want to remove this container?"
-                    ref={this.props.removeModalRef}
+                    ref={this.removeModalRef}
+                    style={{ zIndex: 99 }}
+                    width={250}
+                    height={200}
                     onButtonClicked={this.removeContainer.bind(this)}
-                >
+                />
             </div>
         );
     }

@@ -1,9 +1,9 @@
 import React from "react";
-import { Button } from "antd";
-import Modal from "./modal";
+import { Button } from "@chakra-ui/react";
+import { BaseModal } from "./base/modal";
 
 export interface DialogTriggerProperties {
-    modal: Modal;
+    modal: BaseModal;
     buttonText: string;
 }
 
@@ -14,7 +14,7 @@ export class DialogTrigger extends React.Component<
     render() {
         return (
             <Button
-                type={"primary"}
+                colorScheme={"blue"}
                 style={{ marginBottom: "15px" }}
                 onClick={this.props.modal && this.props.modal.toggleModal}
             >

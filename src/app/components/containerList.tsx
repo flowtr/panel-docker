@@ -1,8 +1,10 @@
 import React from "react";
-import { Container, ContainerListItem } from "./containerListItem";
+import { ContainerListItem } from "./containerListItem";
+import { ContainerData } from "../../common/types";
+import { Stack } from "@chakra-ui/react";
 
 export class ContainerListProps {
-    containers: Container[];
+    containers: ContainerData[];
     title?: string;
 }
 
@@ -12,19 +14,19 @@ export class ContainerList extends React.Component<
 > {
     render() {
         return (
-            <div>
+            <Stack direction="column">
                 <h3>{this.props.title}</h3>
                 <p>
                     {this.props.containers.length == 0
                         ? "No containers to show"
                         : ""}
                 </p>
-                <div className="row">
+                <Stack direction="row">
                     {this.props.containers.map((c) => (
                         <ContainerListItem key={c.name} {...c} />
                     ))}
-                </div>
-            </div>
+                </Stack>
+            </Stack>
         );
     }
 }

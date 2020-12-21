@@ -1,13 +1,13 @@
 import React from "react";
-import Modal from "./modal";
+import { BaseModal } from "./base/modal";
 import classNames from "classnames";
 import { createRef, SyntheticEvent } from "react";
-import { Input, Row } from "antd";
 import { ObjectMap } from "./object-map";
-import { KeyValDef } from "./key-value-editor";
+import { KeyValDef } from "../../common/types";
+import { Flex, Input } from "@chakra-ui/react";
 
 interface ModalProperties {
-    modalRef: React.Ref<Modal>;
+    modalRef: React.Ref<BaseModal>;
     onRunImage?: (
         name: string,
         image: string,
@@ -83,15 +83,17 @@ export class NewContainerDialog extends React.Component<
         });
 
         return (
-            <Modal
+            <BaseModal
                 buttonText="Run"
                 title="Create a new container"
+                width={300}
+                height={200}
                 ref={this.props.modalRef}
                 onButtonClicked={this.runImage.bind(this)}
             >
                 <form>
                     <div className={inputClass}>
-                        <Row>
+                        <Flex>
                             {" "}
                             <label
                                 htmlFor="deploymentName"
@@ -99,8 +101,8 @@ export class NewContainerDialog extends React.Component<
                             >
                                 Deployment name
                             </label>
-                        </Row>
-                        <Row>
+                        </Flex>
+                        <Flex>
                             <Input
                                 type="text"
                                 className="form-control"
@@ -108,8 +110,8 @@ export class NewContainerDialog extends React.Component<
                                 id="deploymentName"
                                 placeholder="e.g my_deployment"
                             />
-                        </Row>
-                        <Row>
+                        </Flex>
+                        <Flex>
                             {" "}
                             <label
                                 htmlFor="imageName"
@@ -117,8 +119,8 @@ export class NewContainerDialog extends React.Component<
                             >
                                 Image name
                             </label>
-                        </Row>
-                        <Row>
+                        </Flex>
+                        <Flex>
                             <Input
                                 type="text"
                                 className="form-control"
@@ -126,14 +128,14 @@ export class NewContainerDialog extends React.Component<
                                 id="imageName"
                                 placeholder="e.g mongodb:latest"
                             />
-                        </Row>
+                        </Flex>
                         <label
                             className="control-label"
                             style={{ marginTop: "15px" }}
                         >
                             Environment variables
                         </label>
-                        <ObjectMap id="env-map" ref={this.portMapRef} />
+                        <ObjectMap id="env-map" ref={this.envMapRef} />
                         <label
                             className="control-label"
                             style={{ marginTop: "15px" }}
@@ -150,7 +152,7 @@ export class NewContainerDialog extends React.Component<
                         <ObjectMap id="volume-map" ref={this.volMapRef} />
                     </div>
                 </form>
-            </Modal>
+            </BaseModal>
         );
     }
 }

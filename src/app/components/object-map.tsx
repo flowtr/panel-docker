@@ -1,10 +1,7 @@
 import React from "react";
-import Modal from "./modal";
-import * as classNames from "classnames";
-import { Button, Col, Input, Row } from "antd";
-import { ObjectMapInput } from "./object-map-input";
-import { XCircle, PlusCircle } from "react-feather";
-import { KeyValDef, KeyValueEditor } from "./key-value-editor";
+import { Flex } from "@chakra-ui/react";
+import { KeyValueEditor } from "./key-value-editor";
+import { KeyValDef } from "../../common/types";
 
 export interface ObjectMapState {
     keyValues: KeyValDef;
@@ -33,13 +30,13 @@ export class ObjectMap extends React.Component<
 
     render() {
         return (
-            <Row className={"object-map-input"}>
+            <Flex className={"object-map-input"}>
                 <KeyValueEditor
                     handleChange={this.handleChange.bind(this)}
                     keyValues={this.state.keyValues}
                     locale="en-US"
                 />
-            </Row>
+            </Flex>
         );
     }
 }

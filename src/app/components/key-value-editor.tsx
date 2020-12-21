@@ -1,9 +1,10 @@
 // Modules
 import React from "react";
 import { ChangeEvent, SyntheticEvent } from "react";
-import { Button, Input } from "antd";
+import { Button, Textarea, Input } from "@chakra-ui/react";
 import { MinusCircle, Plus } from "react-feather";
 import KeyValueMsg from "../translations/key-value.msg";
+import { KeyValDef } from "../../common/types";
 
 export const isValidKeyChar = (c: string) => /^[a-zA-Z0-9-_]+$/.test(c);
 
@@ -16,12 +17,6 @@ export const isValidKeyChar = (c: string) => /^[a-zA-Z0-9-_]+$/.test(c);
  * Taken from https://github.com/amalto/platform6-ui-components
  * Licensed Under MIT License
  */
-export interface KeyValDef {
-    [key: string]: {
-        contentType: string;
-        contentBytes: string;
-    };
-}
 
 export interface KeyValStoreDef {
     [idx: string]: {
@@ -97,7 +92,7 @@ export class KeyValueEditor extends React.Component<
                                 type="text"
                                 className="form-control"
                                 value={keyVal.key}
-                                disabled={readonly}
+                                isDisabled={readonly}
                                 onChange={this.handleKeyChange}
                                 data-idx={idx}
                                 placeholder={KeyValueMsg.messages().key}
@@ -106,7 +101,7 @@ export class KeyValueEditor extends React.Component<
                     </div>
 
                     <div className="form-group col-xs-5">
-                        <Input.TextArea
+                        <Textarea
                             className="form-control"
                             value={keyVal.contentBytes}
                             disabled={readonly}
@@ -126,7 +121,7 @@ export class KeyValueEditor extends React.Component<
                 {!readonly ? (
                     <div>
                         <Button
-                            type="primary"
+                            variant="primary"
                             onClick={this.addKeyValue.bind(this)}
                             data-toggle="tooltip"
                             data-original-title={KeyValueMsg.messages().add}
