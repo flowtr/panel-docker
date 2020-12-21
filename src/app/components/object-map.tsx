@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import Modal from "./modal";
 import * as classNames from "classnames";
 import { Button, Col, Input, Row } from "antd";

@@ -1,5 +1,5 @@
 // Modules
-import * as React from "react";
+import React from "react";
 import { ChangeEvent, SyntheticEvent } from "react";
 import { Button, Input } from "antd";
 import { MinusCircle, Plus } from "react-feather";
@@ -139,15 +139,14 @@ export class KeyValueEditor extends React.Component<
         );
     }
 
-    private addKeyValue = (file?: boolean) => {
+    private addKeyValue = () => {
         const keyValueStore = this.getKeyValueStore(this.props.keyValues);
 
         const idx = Object.keys(keyValueStore).length;
 
         keyValueStore[(idx + 1).toString()] = {
             key: "",
-            contentType:
-                file === true ? "application/octet-stream" : "text/plain",
+            contentType: "text/plain",
             contentBytes: "",
         };
 

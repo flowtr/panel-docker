@@ -1,24 +1,31 @@
-let express = require("express");
-let path = require("path");
-let app = express();
-let server = require("http").Server(app);
-let io = require("socket.io")(server);
-let docker = require("./dockerapi");
+const { sendNotFound, assets } = require("./util");
+const { App } = require("@tinyhttp/app");
+const path = require("path");
+const { cors } = require("@tinyhttp/cors");
+const { logger } = require("@tinyhttp/logger");
+
+// Init servers
+let app = new App({
+    noMatchHandler: sendNotFound,
+});
+const docker = require("./dockerapi.ts");
 
 // Use the environment port if available, or default to 3000
-let port = process.env.PORT || 3000;
+const port = parseInt(process.env.PORT || "3000");
+app.get("/", sendNotFound);
 
 // Serve static files from /public
-app.use(express.static("public"));
-
-// Create an endpoint which just returns the index.html page
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
+app.use([logger(), cors({})]);
+app.use(assets);
 
 // Start the server
-server.listen(port, () => console.log(`Server started on port ${port}`));
+const server = app.listen(port, () =>
+    console.log(`Server started on port ${port}`)
+);
+const io = require("socket.io")(server);
 
 function refreshContainers() {
-    docker.listContainers({}, (err, containers) => {
+    docker.listContainers({ all: true }, (err, containers) => {
         io.emit("containers.list", containers);
     });
 }
@@ -42,14 +49,24 @@ io.on("connection", (socket) => {
         if (container) container.stop({}, () => refreshContainers());
     });
 
+    socket.on("container.rm", (args) => {
+        const container = docker.getContainer(args.id);
+
+        if (container)
+            container.stop({}, () =>
+                container.remove(() => refreshContainers())
+            );
+    });
+
     socket.on("image.run", (args) => {
         console.log(`Received: ${JSON.stringify(args)}`);
         docker
-            .pull(args.name)
+            .pull(args.image)
             .then(() => {
                 docker.createContainer(
                     {
-                        Image: args.name,
+                        name: args.name,
+                        Image: args.image,
                         Env: args.env
                             ? Object.entries(args.env).map(
                                   (e) =>
@@ -58,6 +75,15 @@ io.on("connection", (socket) => {
                                       ).toString("ascii")}`
                               )
                             : {},
+                        ExposedPorts: args.ports ? args.ports : {},
+                        Volumes: Object.fromEntries(
+                            Object.entries(args.volumes).map((e) => e[0])
+                        ),
+                        HostConfig: {
+                            Binds: Object.entries(args.volumes).map(
+                                (e) => `${e[0]}:${e[1]}`
+                            ),
+                        },
                     },
                     (err, container) => {
                         if (!err)

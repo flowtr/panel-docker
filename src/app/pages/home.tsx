@@ -1,13 +1,14 @@
-import * as React from "react";
-import { Container } from "./containerListItem";
-import { ContainerList } from "./containerList";
-import * as _ from "lodash";
+import React from "react";
+import { Container } from "../components/containerListItem";
+import { ContainerList } from "../components/containerList";
+import { partition } from "lodash";
 import * as io from "socket.io-client";
-import { NewContainerDialog } from "./newContainerModal";
-import { DialogTrigger } from "./dialogTrigger";
-import Modal from "./modal";
+import { NewContainerDialog } from "../components/newContainerModal";
+import { DialogTrigger } from "../components/dialogTrigger";
+import Modal from "../components/modal";
 import { createRef } from "react";
 import { Button } from "antd";
+import { KeyValDef } from "../components/key-value-editor";
 
 const socket = io.connect();
 
@@ -16,7 +17,7 @@ class AppState {
     stoppedContainers?: Container[];
 }
 
-export class AppComponent extends React.Component<
+export class HomePage extends React.Component<
     Record<string, unknown>,
     AppState
 > {
@@ -31,7 +32,7 @@ export class AppComponent extends React.Component<
         this.newContainerModal = createRef();
 
         socket.on("containers.list", (containers: Record<string, unknown>) => {
-            const partitioned = _.partition(
+            const partitioned = partition(
                 containers,
                 (c: Record<string, unknown>) => c.State == "running"
             );
@@ -66,14 +67,19 @@ export class AppComponent extends React.Component<
         socket.emit("containers.list");
     }
 
-    onRunImage(name: string, env: Record<string, string>) {
-        socket.emit("image.run", { name, env });
+    onRunImage(
+        name: string,
+        image: string,
+        env: KeyValDef,
+        ports: KeyValDef,
+        volumes: KeyValDef
+    ) {
+        socket.emit("image.run", { name, image, env, ports, volumes });
     }
 
     render() {
         return (
-            <div className="container">
-                <h1 className="page-header">Docker Dashboard</h1>
+            <div className="">
                 <DialogTrigger
                     modal={this.newContainerModal.current}
                     buttonText="New container"
